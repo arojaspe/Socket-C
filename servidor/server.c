@@ -4,13 +4,25 @@
 #include <string.h>
 #include <sys/socket.h>
 #include <unistd.h>
+#include <pthread.h>
 #include "node.h"
 #include "search.h"
+
 
 //server parameters
 #define PORT 			8080
 #define SERVER_ADDRESS	"127.0.0.1"
 #define BUF_SIZE        100
+
+char buffer[1024] = { 0 };
+char * hello = "Hello from server";
+char source_id[60];
+char dst_id[60];
+char hour[60];
+char answer[60];
+
+//the thread function
+void *connection_handler(void *);
 
 int main(int argc, char const* argv[])
 {
@@ -22,13 +34,7 @@ int main(int argc, char const* argv[])
 	int addrlen = sizeof(address);
 
 	//messages
-	char buffer[1024] = { 0 };
-	char * hello = "Hello from server";
-
-	char source_id[60];
-	char dst_id[60];
-	char hour[60];
-	char answer[60];
+	
 
 	//creating socket file descriptor
 	if ((server_fd = socket(AF_INET, SOCK_STREAM, 0))== 0) {
@@ -57,44 +63,76 @@ int main(int argc, char const* argv[])
 		exit(EXIT_FAILURE);
 	}
 
+	
 
     while(1){
+
         if ((new_socket = accept(server_fd, (struct sockaddr*)&address,(socklen_t*)&addrlen))< 0) {
     		perror("accept");
 		    exit(EXIT_FAILURE);
 	    }
 
-        valread = read(new_socket, buffer, 1024);
-	    printf("%s\n", buffer);
-	    send(new_socket, hello, strlen(hello), 0);
-	    //printf("Hello message sent\n");
+		pthread_t thread_id;		
+		int * newsock = malloc(sizeof(int));
+		* newsock = new_socket;
+    	pthread_create(&thread_id, NULL, connection_handler, newsock);
+		pthread_detach(thread_id);
 
-		valread = read(new_socket,source_id,60);
-		int source = atoi(source_id);
-		printf("Source: %d\n",source);
-		send(new_socket, hello, strlen(hello), 0);
-	    //printf("Hello message sent\n");
-
-		valread = read(new_socket,dst_id,60);
-		int dst = atoi(dst_id);
-		printf("Dst: %d\n",dst);
-		send(new_socket, hello, strlen(hello), 0);
-	    printf("Hello message sent\n");
-
-		valread = read(new_socket,hour,60);
-		int time = atoi(hour);
-		printf("Hour: %d\n",time);
-
-		//search binary source/dst/hour951,151,12 
-		int ret = snprintf(answer, sizeof answer, "%f", searchMean(source,dst,time));
-		send(new_socket, answer, strlen(answer), 0);
+    	
 	    //printf("Answer message sent\n");
 
         // closing the connected socket
-	    close(new_socket);
+	    //close(new_socket);
     }
 	
 // closing the listening socket
 	shutdown(server_fd, SHUT_RDWR);
 	return 0;
 }
+
+
+void *connection_handler(void *socket_desc){
+
+	int valread;
+
+    //Get the socket descriptor
+    int new_socket = *(int*)socket_desc;
+    int read_size;
+    char *message , client_message[2000];
+     
+	valread = read(new_socket, buffer, 1024);
+	printf("%s\n", buffer);
+	send(new_socket, hello, strlen(hello), 0);
+	//printf("Hello message sent\n");
+
+	valread = read(new_socket,source_id,60);
+	int source = atoi(source_id);
+	printf("Source: %d\n",source);
+	send(new_socket, hello, strlen(hello), 0);
+	//printf("Hello message sent\n");
+
+	valread = read(new_socket,dst_id,60);
+	int dst = atoi(dst_id);
+	printf("Dst: %d\n",dst);
+	send(new_socket, hello, strlen(hello), 0);
+	printf("Hello message sent\n");
+
+	valread = read(new_socket,hour,60);
+	int time = atoi(hour);
+	printf("Hour: %d\n",time);
+
+	//search binary source/dst/hour951,151,12 
+	int ret = snprintf(answer, sizeof answer, "%f", searchMean(source,dst,time));
+	send(new_socket, answer, strlen(answer), 0);
+
+    if(read_size == 0){
+        puts("Client disconnected");
+        fflush(stdout);
+    }
+
+    else if(read_size == -1){
+        perror("recv failed");
+    }
+         
+    return 0;
+} 
