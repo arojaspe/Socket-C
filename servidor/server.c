@@ -5,6 +5,8 @@
 #include <sys/socket.h>
 #include <unistd.h>
 #include <pthread.h>
+#include <time.h>
+#include <arpa/inet.h>
 #include "node.h"
 #include "search.h"
 
@@ -119,16 +121,28 @@ void *connection_handler(void *socket_desc){
 		printf("Hello message sent\n");
 
 		valread = read(new_socket,hour,60);
-		int time = atoi(hour);
-		printf("Hour: %d\n",time);
+		int timeHour = atoi(hour);
+		printf("Hour: %d\n",timeHour);
+
+		//Getting the time 
+		char tim[128];
+		time_t rawtime = time(NULL);
+		struct tm *ptm = localtime(&rawtime);
+		strftime(tim, 124, "%Y-%m-%dT%H:%M:%S", ptm);
+
+		//Getting ip
+		struct sockaddr_in * pV4Addr = (struct sockaddr_in*)&new_socket;
+		struct in_addr ipAddr = pV4Addr->sin_addr;
+		char strip[INET_ADDRSTRLEN];
+		inet_ntop(AF_INET, &ipAddr, strip,INET_ADDRSTRLEN );
 
 		//write to log file
-		FILE * file = fopen("log.txt","w");
-		fprintf(file,"[Fecha YYYYMMDDTHHMMSS] Cliente [IP] [búsqueda - %d - %d]",source,dst);
+		FILE * file = fopen("log.txt","a");
+		fprintf(file,"[Fecha %s] Cliente [%s] [búsqueda - %d - %d]\n",tim,strip,source,dst);
 		fclose(file);
 
 		//search binary source/dst/hour951,151,12 
-		int ret = snprintf(answer, sizeof answer, "%f", searchMean(source,dst,time));
+		int ret = snprintf(answer, sizeof answer, "%f", searchMean(source,dst,timeHour));
 		send(new_socket, answer, strlen(answer), 0);
 
 	}
