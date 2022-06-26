@@ -78,7 +78,6 @@ int main(int argc, char const* argv[])
     	pthread_create(&thread_id, NULL, connection_handler, newsock);
 		pthread_detach(thread_id);
 
-    	
 	    //printf("Answer message sent\n");
 
         // closing the connected socket
@@ -99,31 +98,42 @@ void *connection_handler(void *socket_desc){
     int new_socket = *(int*)socket_desc;
     int read_size;
     char *message , client_message[2000];
+
+	while(1){
+
+		valread = read(new_socket, buffer, 1024);
+		printf("%s\n", buffer);
+		send(new_socket, hello, strlen(hello), 0);
+		//printf("Hello message sent\n");
+
+		valread = read(new_socket,source_id,60);
+		int source = atoi(source_id);
+		printf("Source: %d\n",source);
+		send(new_socket, hello, strlen(hello), 0);
+		//printf("Hello message sent\n");
+
+		valread = read(new_socket,dst_id,60);
+		int dst = atoi(dst_id);
+		printf("Dst: %d\n",dst);
+		send(new_socket, hello, strlen(hello), 0);
+		printf("Hello message sent\n");
+
+		valread = read(new_socket,hour,60);
+		int time = atoi(hour);
+		printf("Hour: %d\n",time);
+
+		//write to log file
+		FILE * file = fopen("log.txt","w");
+		fprintf(file,"[Fecha YYYYMMDDTHHMMSS] Cliente [IP] [búsqueda - %d - %d]",source,dst);
+		fclose(file);
+
+		//search binary source/dst/hour951,151,12 
+		int ret = snprintf(answer, sizeof answer, "%f", searchMean(source,dst,time));
+		send(new_socket, answer, strlen(answer), 0);
+
+	}
      
-	valread = read(new_socket, buffer, 1024);
-	printf("%s\n", buffer);
-	send(new_socket, hello, strlen(hello), 0);
-	//printf("Hello message sent\n");
-
-	valread = read(new_socket,source_id,60);
-	int source = atoi(source_id);
-	printf("Source: %d\n",source);
-	send(new_socket, hello, strlen(hello), 0);
-	//printf("Hello message sent\n");
-
-	valread = read(new_socket,dst_id,60);
-	int dst = atoi(dst_id);
-	printf("Dst: %d\n",dst);
-	send(new_socket, hello, strlen(hello), 0);
-	printf("Hello message sent\n");
-
-	valread = read(new_socket,hour,60);
-	int time = atoi(hour);
-	printf("Hour: %d\n",time);
-
-	//search binary source/dst/hour951,151,12 
-	int ret = snprintf(answer, sizeof answer, "%f", searchMean(source,dst,time));
-	send(new_socket, answer, strlen(answer), 0);
+	
 
     if(read_size == 0){
         puts("Client disconnected");

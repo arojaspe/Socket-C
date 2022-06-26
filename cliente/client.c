@@ -52,30 +52,34 @@ int main(int argc, char const* argv[])
 	}
 
 	//show the menu options
-	menu();
+	while(1){
+		
+		menu();
 
-	//send search parameters to server
-	send(sock, hello, strlen(hello), 0);
-	//printf("Hello message sent\n");
+		//send search parameters to server
+		send(sock, hello, strlen(hello), 0);
+		//printf("Hello message sent\n");
 
-	//receive answer
-	valread = read(sock, buffer, 1024);
-	//printf("%s\n", buffer);
+		//receive answer
+		valread = read(sock, buffer, 1024);
+		//printf("%s\n", buffer);
 
-	send(sock,source_id,strlen(source_id),0);
-	//printf("source sent\n");
-	valread = read(sock, buffer, 1024);
-	//printf("%s\n", buffer);
+		send(sock,source_id,strlen(source_id),0);
+		//printf("source sent\n");
+		valread = read(sock, buffer, 1024);
+		//printf("%s\n", buffer);
 
-	send(sock,dst_id,strlen(dst_id),0);
-	//printf("dst sent\n");
-	valread = read(sock, buffer, 1024);
-	//printf("%s\n", buffer);
+		send(sock,dst_id,strlen(dst_id),0);
+		//printf("dst sent\n");
+		valread = read(sock, buffer, 1024);
+		//printf("%s\n", buffer);
 
-	send(sock,hour,strlen(hour),0);
-	//printf("hout sent\n");
-	valread = read(sock, answer, 60);
-	printf("Mean: %s\n", answer);
+		send(sock,hour,strlen(hour),0);
+		//printf("hout sent\n");
+		valread = read(sock, answer, 60);
+		printf("Mean: %s\n\n", answer);
+
+	}
 
 	//closing the connected socket
 	close(client_fd);
