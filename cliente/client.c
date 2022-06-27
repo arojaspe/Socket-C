@@ -79,6 +79,10 @@ int main(int argc, char const* argv[])
 		valread = read(sock, answer, 60);
 		printf("Mean: %s\n\n", answer);
 
+		printf("Press any key to Continue\n");
+		getchar();
+		pause();
+
 	}
 
 	//closing the connected socket
