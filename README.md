@@ -1,7 +1,7 @@
 
 ## Second Practice
 Implementation socket and multithreand in C language, with the goal to create a server, where you can query mean time between
-origin and destination from a binary file based on Bogota data.
+origin and destination at a particular time from a binary file based on Bogota data.
 
 #### Names:
 - Andres Fernando Rojas Pedroza
