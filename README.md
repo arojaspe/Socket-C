@@ -9,9 +9,11 @@ origin and destination from a binary file based on Bogota data.
 
 #### Instructions:
 In one konsole tab 
+
   1. make
   2. cd servidor
   3. ./server
+  
 In another konsole tab
   1. cd cliente
   2. ./client
