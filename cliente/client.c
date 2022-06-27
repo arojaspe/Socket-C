@@ -15,6 +15,7 @@ char dst_id[60];
 char hour[60];
 char answer[60];
 
+//definition functions
 void menu();
 void selector();
 int read_option();
@@ -29,7 +30,6 @@ int main(int argc, char const* argv[])
 	char * hello = "Hello from client";
 	char buffer[1024] = { 0 };
 	
-
 	//sockect creation
 	if ((sock = socket(AF_INET, SOCK_STREAM, 0)) < 0) {
 		printf("\n Socket creation error \n");
@@ -50,6 +50,7 @@ int main(int argc, char const* argv[])
 		printf("\nConnection Failed \n");
 		return -1;
 	}
+	
 
 	//show the menu options
 	while(1){
@@ -77,16 +78,19 @@ int main(int argc, char const* argv[])
 		send(sock,hour,strlen(hour),0);
 		//printf("hout sent\n");
 		valread = read(sock, answer, 60);
-		printf("Mean: %s\n\n", answer);
 
-		printf("Press any key to Continue\n");
+		if(atoi(answer)==0){
+			printf("Mean: Nand\n");
+		}else{
+			printf("Mean: %s\n\n", answer);
+		}
+		printf("Presione enter para continuar\n");
 		getchar();
-		pause();
-
+		getchar();
 	}
 
 	//closing the connected socket
-	close(client_fd);
+	//close(client_fd);
 	return 0;
 }
 
@@ -127,10 +131,10 @@ void selector(){
             while(1){	
 				fgets(hour,60,stdin);
 				int x = atoi(hour);
-				if(x<=24 && x>0){
+				if(x> 0 && x<24){
 					break;
 				}
-				printf("Por favor, seleccione un valor entre 1 y 24\n");
+				printf("Por favor, seleccione un valor entre 0 y 23\n");
 				printf("Hour: ");
 			}
 			system("clear");
@@ -155,6 +159,6 @@ int read_option(){
     answer_option = malloc(sizeof(int));
     scanf("%d", answer_option);
 	system("clear");
-    return *answer_option;
+    return * answer_option;
     free(answer_option);
 }
