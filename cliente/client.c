@@ -1,15 +1,27 @@
-#include <arpa/inet.h>
+/***********************************************************************
+ *  C socket client, search mean time between origin and destination   *
+ *  Compile                                                            *
+ *  gcc client.c -o client			                                   *
+ ***********************************************************************/
+
+//standard libraries
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+
+//socket libraries 
+#include <arpa/inet.h>
 #include <sys/socket.h>
 #include <unistd.h>
 
 //server parameters
-#define SERVER_ADDRESS 	"127.0.0.1"
-#define PORT 			8080
+#define SERVER_ADDRESS 	"127.0.0.1"			/* server host address			      */
+#define PORT 			8080				/* port client will connect to        */
 
-//search parameters
+/*
+ *search parameters
+ *buffer for each variable 
+ */
 char source_id[60];
 char dst_id[60];
 char hour[60];
@@ -20,9 +32,14 @@ void menu();
 void selector();
 int read_option();
 
-int main(int argc, char const* argv[])
-{
-	/**/
+/*
+ * Client Main.
+ */
+int main(int argc, char const* argv[]){
+
+	/*
+     * Get a stream socket.
+     */
 	int sock = 0, valread, client_fd;
 	struct sockaddr_in serv_addr;
 
@@ -46,12 +63,14 @@ int main(int argc, char const* argv[])
 		return -1;
 	}
 
+	/*
+     * Connect to the server.
+     */
 	if ((client_fd = connect(sock, (struct sockaddr*)&serv_addr,sizeof(serv_addr)))< 0) {
 		printf("\nConnection Failed \n");
 		return -1;
 	}
 	
-
 	//show the menu options
 	while(1){
 		
@@ -88,17 +107,23 @@ int main(int argc, char const* argv[])
 		getchar();
 		getchar();
 	}
-
 	//closing the connected socket
 	//close(client_fd);
 	return 0;
 }
 
+/*
+ *show the menu and options 
+ */
 void menu(){
 	printf("1. Ingresar origen\n2. Ingresar destino\n3. Ingresar hora \n4. Buscar tiempo de viaje medio \n5. Salir\n \nSeleccione la opción: "); 
 	selector();
 }
 
+/*
+ *code's core, here is the logic,
+ *after to connect client to the socket
+ */
 void selector(){
 	switch(read_option()){
         case 1:
@@ -154,6 +179,10 @@ void selector(){
     }
 }
 
+/*
+ *read_option return one int
+ *represent one election in switch
+ */
 int read_option(){
     int *answer_option;
     answer_option = malloc(sizeof(int));

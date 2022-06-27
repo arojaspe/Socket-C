@@ -1,23 +1,34 @@
-#include <netinet/in.h>
+/***********************************************************************
+ *  C socket server, multiple clients using threads	                   *
+ *  Compile                                                            *
+ *  gcc server.c -o -pthread server                                    *
+ ***********************************************************************/
+
+//standar libraries 
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+
+//socket libraries
 #include <sys/socket.h>
 #include <unistd.h>
-#include <pthread.h>
-#include <time.h>
 #include <arpa/inet.h>
+#include <netinet/in.h>
+
+//thread libraries 
+#include <pthread.h>
+
+//time libraries
+#include <time.h>
 
 //add headers 
 #include "node.h"
 #include "search.h"
 
-
 //server parameters
 #define PORT 			8080
 #define SERVER_ADDRESS	"127.0.0.1"
 #define BUF_SIZE        100
-
 
 //buffer for differents variables
 char buffer[1024] = { 0 };
@@ -29,6 +40,10 @@ char answer[60];
 
 //definition thread function
 void *connection_handler(void *);
+
+/*
+ * Client Main.
+ */
 
 int main(int argc, char const* argv[])
 {
@@ -49,6 +64,11 @@ int main(int argc, char const* argv[])
 		perror("setsockopt");
 		exit(EXIT_FAILURE);
 	}
+
+	/*
+     * Put the server information into the server structure.
+     * The port must be put into network byte order.
+     */
 	address.sin_family = AF_INET;
 	address.sin_addr.s_addr = INADDR_ANY;
 	address.sin_port = htons(PORT);
@@ -96,15 +116,8 @@ int main(int argc, char const* argv[])
         // closing the connected socket
 	    //close(new_socket);
     }
-	
-	// closing the listening socket
-	//shutdown(server_fd, SHUT_RDWR);
 
-	if (listen(server_fd, 3) < 0) {
-		perror("listen");
-		exit(EXIT_FAILURE);
-	}
-
+	close(new_socket);
 	return 0;
 }
 
@@ -122,28 +135,28 @@ void *connection_handler(void *socket_desc){
 		
 		//message for to check 
 		valread = read(new_socket, buffer, 1024);
-		printf("%s\n", buffer);
+		//printf("%s\n", buffer);
 		send(new_socket, hello, strlen(hello), 0);
 		//printf("Hello message sent\n");
 
 		//read origin id from client
 		valread = read(new_socket,source_id,60);
 		int source = atoi(source_id);
-		printf("Source: %d\n",source);
+		//printf("Source: %d\n",source);
 		send(new_socket, hello, strlen(hello), 0);
 		//printf("Hello message sent\n");
 
 		//read destination id from client
 		valread = read(new_socket,dst_id,60);
 		int dst = atoi(dst_id);
-		printf("Dst: %d\n",dst);
+		//printf("Dst: %d\n",dst);
 		send(new_socket, hello, strlen(hello), 0);
-		printf("Hello message sent\n");
+		//printf("Hello message sent\n");
 
 		//read hour from client
 		valread = read(new_socket,hour,60);
 		int timeHour = atoi(hour);
-		printf("Hour: %d\n",timeHour);
+		//printf("Hour: %d\n",timeHour);
 
 		//Getting the time for each query 
 		char tim[128];
@@ -155,7 +168,7 @@ void *connection_handler(void *socket_desc){
 		struct sockaddr_in * pV4Addr = (struct sockaddr_in*)&new_socket;
 		struct in_addr ipAddr = pV4Addr->sin_addr;
 		char strip[INET_ADDRSTRLEN];
-		inet_ntop(AF_INET, &ipAddr, strip,INET_ADDRSTRLEN );
+		inet_ntop(AF_INET, &ipAddr, strip,INET_ADDRSTRLEN);
 
 		//write to server log file
 		FILE * file = fopen("log.txt","a");
@@ -167,13 +180,9 @@ void *connection_handler(void *socket_desc){
 		send(new_socket, answer, strlen(answer), 0);
 
 		if(read_size == 0){
-        	puts("Client disconnected");
-        	fflush(stdout);
-    	}
-
-	    else if(read_size == -1){
-    	    perror("recv failed");
+			
     	}
 	}    
+
     return 0;
 } 

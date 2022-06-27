@@ -1,7 +1,0 @@
-[Fecha 2022-06-27T10:26:17] Cliente [0.0.0.0] [bÃºsqueda - 951 - 151 - 12],H‰EØD‹Eô‹}øHà÷ÿÿH•`÷ÿÿH‹EØHƒì‹uğVE‰ÁA‰øH5J
-[Fecha 2022-06-27T10:26:58] Cliente [0.0.0.0] [bÃºsqueda - 906 - 601 - 12],H‰EØD‹Eô‹}øHà÷ÿÿH•`÷ÿÿH‹EØHƒì‹uğVE‰ÁA‰øH5J
-[Fecha 2022-06-27T10:27:20] Cliente [10.0.0.0] [bÃºsqueda - 745 - 938 - 16],H‰EØD‹Eô‹}øHà÷ÿÿH•`÷ÿÿH‹EØHƒì‹uğVE‰ÁA‰øH5J
-[Fecha 2022-06-27T10:27:48] Cliente [0.0.0.0] [bÃºsqueda - 839 - 558 - 9],H‰EØD‹Eô‹}øHà÷ÿÿH•`÷ÿÿH‹EØHƒì‹uğVE‰ÁA‰øH5J
-[Fecha 2022-06-27T10:33:27] Cliente [0.0.0.0] [bÃºsqueda - 2 - 2 - 2]
-[Fecha 2022-06-27T10:50:51] Cliente [0.0.0.0] [bÃºsqueda - 951 - 151 - 12]
-[Fecha 2022-06-27T10:52:37] Cliente [0.0.0.0] [bÃºsqueda - 745 - 938 - 16]
